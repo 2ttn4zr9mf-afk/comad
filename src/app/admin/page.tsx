@@ -107,7 +107,7 @@ export default function AdminPage() {
             href="/api/admin/export"
             className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900"
           >
-            Exportar CSV
+            Exportar Excel
           </a>
         </div>
 

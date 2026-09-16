@@ -1,13 +1,7 @@
 import { NextResponse } from "next/server";
+import * as XLSX from "xlsx";
 import { prisma } from "@/lib/prisma";
 import { isAdminAuthenticated } from "@/lib/auth";
-
-function csvEscape(value: string) {
-  if (/[",\n]/.test(value)) {
-    return `"${value.replace(/"/g, '""')}"`;
-  }
-  return value;
-}
 
 export async function GET() {
   if (!(await isAdminAuthenticated())) {
@@ -19,68 +13,52 @@ export async function GET() {
     orderBy: { createdAt: "desc" },
   });
 
-  const headers = [
-    "tipo",
-    "nombre",
-    "apellido",
-    "telefono",
-    "email",
-    "fecha_nacimiento",
-    "iglesia",
-    "trae_invitado",
-    "email_enviado",
-    "fecha_inscripcion",
-    "inscrito_padre",
-  ];
+  const inscritosRows = registrations.map((r) => ({
+    Nombre: r.nombre,
+    Apellido: r.apellido,
+    Teléfono: r.telefono,
+    Email: r.email,
+    "Fecha de nacimiento": r.fechaNacimiento.toISOString().slice(0, 10),
+    Iglesia: r.iglesia,
+    "Trae invitado": r.traeInvitado ? "Sí" : "No",
+    "Nº invitados": r.guests.length,
+    "Email enviado": r.emailEnviado ? "Sí" : "No",
+    "Fecha de inscripción": r.createdAt.toISOString().slice(0, 10),
+  }));
 
-  const rows: string[] = [headers.join(",")];
+  const invitadosRows = registrations.flatMap((r) =>
+    r.guests.map((g) => ({
+      Nombre: g.nombre,
+      Apellido: g.apellido,
+      Teléfono: g.telefono ?? "",
+      Email: g.email ?? "",
+      "Fecha de nacimiento": g.fechaNacimiento
+        ? g.fechaNacimiento.toISOString().slice(0, 10)
+        : "",
+      Iglesia: g.iglesia ?? "",
+      "Inscrito por": `${r.nombre} ${r.apellido}`,
+    }))
+  );
 
-  for (const r of registrations) {
-    rows.push(
-      [
-        "inscrito",
-        r.nombre,
-        r.apellido,
-        r.telefono,
-        r.email,
-        r.fechaNacimiento.toISOString().slice(0, 10),
-        r.iglesia,
-        r.traeInvitado ? "si" : "no",
-        r.emailEnviado ? "si" : "no",
-        r.createdAt.toISOString(),
-        "",
-      ]
-        .map((v) => csvEscape(String(v)))
-        .join(",")
-    );
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(
+    workbook,
+    XLSX.utils.json_to_sheet(inscritosRows),
+    "Inscritos"
+  );
+  XLSX.utils.book_append_sheet(
+    workbook,
+    XLSX.utils.json_to_sheet(invitadosRows),
+    "Invitados"
+  );
 
-    for (const g of r.guests) {
-      rows.push(
-        [
-          "invitado",
-          g.nombre,
-          g.apellido,
-          g.telefono ?? "",
-          g.email ?? "",
-          g.fechaNacimiento ? g.fechaNacimiento.toISOString().slice(0, 10) : "",
-          g.iglesia ?? "",
-          "",
-          "",
-          "",
-          `${r.nombre} ${r.apellido}`,
-        ]
-          .map((v) => csvEscape(String(v)))
-          .join(",")
-      );
-    }
-  }
+  const buffer = XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
 
-  const csv = rows.join("\n");
-
-  return new NextResponse(csv, {
+  return new NextResponse(buffer, {
     headers: {
-      "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="inscripciones.csv"`,
+      "Content-Type":
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Disposition": `attachment; filename="inscripciones.xlsx"`,
     },
   });
 }
