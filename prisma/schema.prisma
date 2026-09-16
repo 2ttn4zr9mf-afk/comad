@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Registration {
+  id            String   @id @default(cuid())
+  nombre        String
+  apellido      String
+  telefono      String
+  email         String
+  fechaNacimiento DateTime
+  iglesia       String
+  traeInvitado  Boolean  @default(false)
+  emailEnviado  Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  guests        Guest[]
+}
+
+model Guest {
+  id              String   @id @default(cuid())
+  nombre          String
+  apellido        String
+  telefono        String?
+  email           String?
+  fechaNacimiento DateTime?
+  iglesia         String?
+
+  registration    Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  registrationId  String
+}
