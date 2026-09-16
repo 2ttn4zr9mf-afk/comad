@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 type Guest = {
   id: string;
@@ -126,9 +126,8 @@ export default function AdminPage() {
             </thead>
             <tbody>
               {registrations?.map((r) => (
-                <>
+                <Fragment key={r.id}>
                   <tr
-                    key={r.id}
                     className="cursor-pointer border-t border-zinc-100 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50"
                     onClick={() =>
                       setExpanded(expanded === r.id ? null : r.id)
@@ -169,7 +168,7 @@ export default function AdminPage() {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               ))}
             </tbody>
           </table>
