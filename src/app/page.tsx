@@ -113,7 +113,7 @@ export default function Home() {
       <div className="mx-auto max-w-2xl rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-900 sm:p-10">
         <div className="flex items-center gap-4">
           <Image
-            src="/logo-comad.svg"
+            src="/logo-comad.png"
             alt="Logo COMAD Training"
             width={80}
             height={80}
