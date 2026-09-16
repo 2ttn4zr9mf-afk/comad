@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useFieldArray, useForm } from "react-hook-form";
 
 type GuestForm = {
@@ -110,12 +111,23 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black">
       <div className="mx-auto max-w-2xl rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-900 sm:p-10">
-        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-          Formulario de inscripción
-        </h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-          Completa tus datos. Tras enviar el formulario recibirás un correo
-          con los métodos de pago.
+        <div className="flex items-center gap-4">
+          <Image
+            src="/logo-comad.svg"
+            alt="Logo COMAD Training"
+            width={80}
+            height={80}
+            className="h-16 w-16 shrink-0 sm:h-20 sm:w-20"
+          />
+          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50 sm:text-3xl">
+            Inscripción a COMAD Training
+          </h1>
+        </div>
+        <p className="mt-4 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+          Gracias por dar este paso en querer conocer más a Dios y sentarte a
+          esta conversación íntima con nuestro Rey, en el momento que
+          rellenes este formulario te enviaremos un correo con nuestros
+          planes de subscripción.
         </p>
 
         <form
