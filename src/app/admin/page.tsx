@@ -111,8 +111,8 @@ export default function AdminPage() {
           </a>
         </div>
 
-        <div className="overflow-hidden rounded-2xl bg-white shadow-sm dark:bg-zinc-900">
-          <table className="w-full text-left text-sm">
+        <div className="overflow-x-auto rounded-2xl bg-white shadow-sm dark:bg-zinc-900">
+          <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
               <tr>
                 <th className="px-4 py-3">Nombre</th>
